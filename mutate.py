@@ -250,7 +250,10 @@ if __name__ == '__main__':
     # Main stuff
     # Mode: Analyze file
     if args.ANALYZE_FILE:
-        filenames = Resource.process_arg(args.ANALYZE_FILE)
+        if args.ANALYZE_FILE == '-':
+            filenames = '-'
+        else:
+            filenames = Resource.process_arg(args.ANALYZE_FILE)
         resource = Resource(filenames)
         if not quiet:
             logger.info(
