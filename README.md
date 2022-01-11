@@ -2,6 +2,9 @@ PassMutate
 =======
 ![](https://img.shields.io/badge/build-passing-brightgreen) ![](https://img.shields.io/badge/license-GPL%203-blue) ![](https://img.shields.io/badge/passmutate-v1.0-blue)
 
+*(For "defeater", a powerful wordlist I created with PassMutate,
+[click here](https://github.com/kaimosensei/defeater))*.
+
 PassMutate is a tool that enhances the efficacy of any given
 wordlist (AKA password list) for brute-forcing passwords in the pentesting field.
 
@@ -10,6 +13,7 @@ It also aids in the management and creation of wordlists.
 Its main use is the mutation of passwords in a wordlist to increase the
 size and "fill in the gaps" of that wordlist. Mutation works by
 expanding on every password in a wordlist and creating similar variations of those passwords.
+Basic mutation alone (-m 0) can boost a wordlist's hit rate to up to 300%.
 
 A good example of why mutation is useful is the cewl tool. Cewl scrapes
 a website and generates a wordlist. If the password to mycarshop.com is
@@ -413,3 +417,65 @@ buddy3558                           *7¡Vamos!
 
 It may be surprising to see "CELTIC", "mara" and "cxz" so low but short passwords and uppercase passwords are
 quite rare in rockyou.txt
+
+## How effective is mutation, really?
+Certain metrics were used to boast an improvement of 300% to hit chance for wordlists with mutation level 0.
+
+The performance of a wordlist is ascertained by trying to crack a bunch
+of hashes with said wordlist and seeing how many of those hashes could
+be cracked ("hit rate").
+
+A very large hashlist was downloaded from
+[haveibeenpwned](https://haveibeenpwned.com/).
+The hashlist was a collection of real-world passwords that were hashed
+with SHA1. It consists of 847,223,402 unique hashes and is sorted by
+frequency (i.e. most common passwords are sorted to the top).
+
+I consider it representative of passwords in the real world because
+the file is populated by both passwords donated and leaked passwords.
+
+Because the hashlist is too large to work with, it was broken down
+into several separate hashlists:
+- **sampled_10million**: 10,000,000 ordered and evenly-distributed
+hashes sampled from the hashlist (occurrence range of 37,359,195 - 1).
+- **first_million**: The most frequent 1,000,000 hashes
+(occurrence range of 37,359,195 - 326)
+- **last_million**: The lease frequent 1,000,000 hashes (occurrence range
+for all is 1. They are all unique passwords).
+
+Performance against these hashlists were tested with:
+- **rockyou**: The standard rockyou list
+- **rockyou_m0**: Rockyou but mutated with level 0 mutation
+- **defeater_nomutation**: [A wordlist I created](https://github.com/kaimosensei/defeater) using PassMutate, sans
+mutation.
+- **defeater_m0**: Standard version of defeater. Mutated with level
+0 mutation. It's official name is "defeater" but I've appended "_m0" for
+comparison's sake.
+
+*Note: Only level 0 mutation was analyzed because levels 1 and 2 would take too
+long with my setup.*
+
+Here are the following results (successful cracks):
+
+|                         | sampled_10million | first_million      | last_million     |
+|-------------------------|-------------------|--------------------|------------------|
+| **rockyou**             | 0.67% *(67,000)*  | 68.35% *(683,500)* | 0% *(0)*         |
+| **rockyou_m0**          | 2.16% *(216,000)* | 74.45% *(744,500)* | 1.33% *(13,300)* |
+| **defeater_nomutation** | 2.75% *(275,000)* | 90.76% *(907,600)* | 0.21% *(2,100)*  |
+| **defeater_m0**         | 5.57% *(557,000)* | 92.81% *(928,100)* | 2.43% *(24,300)* |
+
+The results show:
+* In the sampled 10million, mutation 0 increases hit rate by
+100 - 200%. 
+* For the million most common passwords, mutation shows only small improvements.
+* In regards to the million least common passwords:
+    * Mutation greatly increased hit rate by ~900%.
+    * Rockyou was able to go from 0 hits to 13,300.
+    * Mutation seems to greatly increase hit rate for passwords that are rare and
+haven't been included in wordlists.
+* The standard defeater outperforms rockyou by ~700% at a cost of filesize and cracking times
+(more info of the tradeoff available on the
+* [defeater repo](https://github.com/kaimosensei/defeater)).
+
+In summary, mutation appears to be very effective in most cases, though it will
+increase file sizes and take longer to crack.
