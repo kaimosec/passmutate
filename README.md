@@ -392,10 +392,14 @@ We might find, for example, that only 0.02% of rockyou.txt's passwords have this
 meaning it's a relatively uncommon combination and will thus be sorted accordingly.
 
 By analyzing the probability of every possible combination of a password's features, a more accurate sorting
-algorithm is achieved, albeit with a reduction in sorting speed.
+algorithm is achieved.
 
 Of course, sorting accuracy is limited to the features of a password, not the password itself, so it cannot
 differentiate "password" from "aienhpof", for example, as their features are identical.
+
+For this reason, rockyou, a wordlist that sorts by each password's individual frequency, cracks substantially faster
+than if it were sorted by efficacy. However, sorting an unsorted wordlist by efficacy should boost its performance by
+about 38%.
 
 Here's an example of a wordlist before and after sorting by efficiency:
 
