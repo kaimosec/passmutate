@@ -305,7 +305,7 @@ files are recoverable. If you don't want this, adjust the temporary directory pa
 This tool is for educational purposes only.
 
 # Contact
-You can email me at kaimo.sensei@protonmail.com
+You can email me at kaimo.sec@protonmail.com
 
 # Special Thanks
 - Freudenstein - Testing
